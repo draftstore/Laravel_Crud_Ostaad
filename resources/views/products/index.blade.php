@@ -12,7 +12,7 @@
     </div>
 
     <div class="table-responsive">
-        <table id="myTable" class="table table-striped table-bordered" style="padding: 10px">
+        <table id="myTable" class="table table-striped table-bordered">
             <thead class="table-dark">
                 <tr>
                     <th>#</th>
@@ -29,10 +29,14 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="50" height="50" class="rounded">
+                        @if ($product->image)
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="50" height="50">
+                        @else
+                            <span>No Image</span>
+                        @endif
                     </td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ implode(' ', array_slice(explode(' ', $product->description), 0, 5)) }}</td>
+                    <td>{{ implode(' ', array_slice(explode(' ', $product->description), 0, 5)) }}...</td>
                     <td>${{ number_format($product->price, 2) }}</td>
                     <td>{{ $product->stock }}</td>
                     <td>
@@ -55,3 +59,18 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            language: {
+                emptyTable: "No products available in the table"
+            },
+            columnDefs: [
+                { orderable: false, targets: [1, 6] } // Disable sorting for Image and Actions columns
+            ]
+        });
+    });
+</script>
+@endpush
